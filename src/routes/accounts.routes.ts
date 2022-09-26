@@ -1,25 +1,15 @@
-import { AccountsRepository } from '@modules/account/repositories/AccountsRepository';
-import { CreateAccountService } from '@modules/account/services/CreateAccountService';
+import { createAccountController } from '@modules/account/useCases/createAccount';
+import { listAccountsController } from '@modules/account/useCases/listAccounts';
 import { Router } from 'express';
 
 const accountsRoutes = Router();
 
-const accountsRepository = new AccountsRepository();
-
 accountsRoutes.post('/', (request, response) => {
-  const { email, password } = request.body;
-
-  const createAccountService = new CreateAccountService(accountsRepository);
-
-  createAccountService.execute({ email, password });
-
-  return response.status(201).send();
+  return createAccountController.handle(request, response);
 });
 
 accountsRoutes.get('/', (request, response) => {
-  const all = accountsRepository.list();
-
-  return response.json(all);
+  return listAccountsController.handle(request, response);
 });
 
 export { accountsRoutes };

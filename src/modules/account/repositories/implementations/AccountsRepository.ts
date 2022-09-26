@@ -1,11 +1,21 @@
-import { Account } from '../model/Account';
-import { IAccountsRepository, ICreateAccountDTO } from './IAccountsRepository';
+import { Account } from '../../model/Account';
+import { IAccountsRepository, ICreateAccountDTO } from '../IAccountsRepository';
 
 class AccountsRepository implements IAccountsRepository {
   private accounts: Account[];
 
+  private static INSTANCE: AccountsRepository;
+
   constructor() {
     this.accounts = [];
+  }
+
+  public static getInstance(): AccountsRepository {
+    if (!AccountsRepository.INSTANCE) {
+      AccountsRepository.INSTANCE = new AccountsRepository();
+    }
+
+    return AccountsRepository.INSTANCE;
   }
 
   create({ email, password }: ICreateAccountDTO): void {
