@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
+import { container } from 'tsyringe';
 import { CreateAccountUseCase } from './CreateAccountUseCase';
 
-class CreateAccountController {
-  constructor(private createAccountUseCase: CreateAccountUseCase) {}
-
-  handle(request: Request, response: Response): Response {
+export class CreateAccountController {
+  public async handle(request: Request, response: Response): Promise<Response> {
     const { email, password } = request.body;
 
-    this.createAccountUseCase.execute({ email, password });
+    const createAccountUC = container.resolve(CreateAccountUseCase);
 
-    return response.status(201).send();
+    const account = await createAccountUC.execute({
+      email,
+      password,
+    });
+
+    return response.status(201).json(account);
   }
 }
-
-export { CreateAccountController };

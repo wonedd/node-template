@@ -1,41 +1,18 @@
-import { Account } from '../../model/Account';
+import { Account } from '@prisma/client';
+import { prisma } from '@shared/infra/prisma';
 import { IAccountsRepository, ICreateAccountDTO } from '../IAccountsRepository';
 
 class AccountsRepository implements IAccountsRepository {
-  private accounts: Account[];
+  private ormRepository = prisma.account;
 
-  private static INSTANCE: AccountsRepository;
-
-  constructor() {
-    this.accounts = [];
-  }
-
-  public static getInstance(): AccountsRepository {
-    if (!AccountsRepository.INSTANCE) {
-      AccountsRepository.INSTANCE = new AccountsRepository();
-    }
-
-    return AccountsRepository.INSTANCE;
-  }
-
-  create({ email, password }: ICreateAccountDTO): void {
-    const account = new Account();
-
-    Object.assign(account, {
-      email,
-      password,
-      created_at: new Date(),
+  async create({ email, password }: ICreateAccountDTO): Promise<Account> {
+    const account = await this.ormRepository.create({
+      data: {
+        email,
+        password,
+      },
     });
 
-    this.accounts.push(account);
-  }
-
-  list(): Account[] {
-    return this.accounts;
-  }
-
-  findByEmail(email: string): Account {
-    const account = this.accounts.find(a => a.email === email);
     return account;
   }
 }

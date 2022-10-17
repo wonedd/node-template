@@ -1,4 +1,4 @@
-import { Account } from '../model/Account';
+import { Account } from '@prisma/client';
 
 interface ICreateAccountDTO {
   email: string;
@@ -6,9 +6,7 @@ interface ICreateAccountDTO {
 }
 
 interface IAccountsRepository {
-  create({ email, password }: ICreateAccountDTO): void;
-  list(): Account[];
-  findByEmail(email: string): Account;
+  create({ email, password }: ICreateAccountDTO): Promise<Account>;
 }
 
 export { IAccountsRepository, ICreateAccountDTO };
